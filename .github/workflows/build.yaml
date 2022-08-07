@@ -71,10 +71,3 @@ jobs:
         with:
           args: >
             -Dsonar.projectVersion=${{ steps.get_version.outputs.version }}
-
-      - name: FOSSA Scan
-        uses: fossas/fossa-action@main
-        if: github.event_name != 'pull_request'
-        with:
-          api-key: ${{secrets.FOSSA_API_KEY}}
-          run-tests: true
