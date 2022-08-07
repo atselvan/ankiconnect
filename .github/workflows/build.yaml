@@ -1,0 +1,80 @@
+name: Build & Tag
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+env:
+  orgName: atselvan
+  appName: ankiconnect
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: Test
+        run: go test -cover -coverprofile=c.out ./...
+
+      - name: Bump version and push tag
+        id: bump_version
+        uses: geoadmin/github-tag-action@1.41.0
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
+          RELEASE_BRANCHES: master
+          INITIAL_VERSION: 1.0.0
+          DEFAULT_BUMP: patch
+          VERBOSE: true
+
+      - name: Get Version
+        id: get_version
+        uses: bhowell2/github-substring-action@v1.0.0
+        if: github.event_name != 'pull_request'
+        with:
+          value: ${{ steps.bump_version.outputs.tag }}
+          index_of_str: "v"
+          output_name: version
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./c.out
+          flags: unittests
+          name: ${{ env.appName }}
+          yml: ./codecov.yml
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectVersion=${{ steps.get_version.outputs.version }}
+
+      - name: FOSSA Scan
+        uses: fossas/fossa-action@main
+        if: github.event_name != 'pull_request'
+        with:
+          api-key: ${{secrets.FOSSA_API_KEY}}
+          run-tests: true

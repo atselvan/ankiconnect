@@ -1,0 +1,16 @@
+# IDE
+**.iml
+.idea/
+.vscode
+
+# Scanners
+.scannerwork
+
+# OS
+**.DS_Store
+
+# Executables
+
+# Others
+c.out
+coverage.html
