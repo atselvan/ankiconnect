@@ -88,3 +88,13 @@ if restErr != nil {
 	log.Fatal(restErr)
 }
 ```
+
+### Sync local data to Anki Cloud
+```go
+client := ankiconnect.NewClient()
+
+restErr := client.Sync.Trigger()
+if restErr != nil {
+	log.Fatal(restErr)
+}
+```
