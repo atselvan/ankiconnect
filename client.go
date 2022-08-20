@@ -26,6 +26,7 @@ type (
 		// supported interfaces
 		Decks DecksManager
 		Notes NotesManager
+		Sync SyncManager
 	}
 
 	// RequestPayload represents the request payload for anki connect api.
@@ -58,6 +59,7 @@ func NewClient() *Client {
 
 	c.Decks = &decksManager{Client: c}
 	c.Notes = &notesManager{Client: c}
+	c.Sync = &syncManager{Client: c}
 
 	return c
 }
@@ -91,6 +93,13 @@ func (c *Client) SetDecksManager(dm DecksManager) *Client {
 // This function is added for testing the NotesManager interface.
 func (c *Client) SetNotesManager(nm NotesManager) *Client {
 	c.Notes = nm
+	return c
+}
+
+// SetSyncManager can be used to set a custom SyncManager interface.
+// This function is added for testing the SyncManager interface.
+func (c *Client) SetSyncManager(sm SyncManager) *Client {
+	c.Sync = sm
 	return c
 }
 
