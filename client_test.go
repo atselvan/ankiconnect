@@ -53,6 +53,12 @@ func TestClient_SetNotesManager(t *testing.T) {
 	assert.Exactly(t, nm, c.Notes)
 }
 
+func TestClient_SetSyncManager(t *testing.T) {
+	sm := &syncManager{}
+	c := NewClient().SetSyncManager(sm)
+	assert.Exactly(t, sm, c.Sync)
+}
+
 func TestClient_Ping(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		c := NewClient()
