@@ -3,11 +3,12 @@ package ankiconnect
 import "github.com/privatesquare/bkst-go-utils/utils/errors"
 
 const (
-	ActionFindNotes   = "findNotes"
-	ActionNotesInfo   = "notesInfo"
-	ActionAddNote     = "addNote"
-	ActionAddNotes    = "addNotes"
-	ActionDeleteNotes = "deleteNotes"
+	ActionFindNotes        = "findNotes"
+	ActionNotesInfo        = "notesInfo"
+	ActionAddNote          = "addNote"
+	ActionAddNotes         = "addNotes"
+	ActionDeleteNotes      = "deleteNotes"
+	ActionUpdateNoteFields = "updateNoteFields"
 )
 
 type (
@@ -15,6 +16,7 @@ type (
 	NotesManager interface {
 		Add(note Note) *errors.RestErr
 		Get(query string) (*[]ResultNotesInfo, *errors.RestErr)
+		Update(note UpdateNote) *errors.RestErr
 	}
 
 	// notesManager implements NotesManager.
@@ -25,6 +27,11 @@ type (
 	// ParamsCreateNote represents the ankiconnect API params for creating a note.
 	ParamsCreateNote struct {
 		Note *Note `json:"note,omitempty"`
+	}
+
+	// ParamsCreateNote represents the ankiconnect API params for updating a note.
+	ParamsUpdateNote struct {
+		Note *UpdateNote `json:"note,omitempty"`
 	}
 
 	// ParamsGetNotes represents the ankiconnect API params for querying notes.
@@ -55,6 +62,14 @@ type (
 		Audio     []Audio   `json:"audio,omitempty"`
 		Video     []Video   `json:"video,omitempty"`
 		Picture   []Picture `json:"picture,omitempty"`
+	}
+
+	UpdateNote struct {
+		Id      int64     `json:"id,omitempty"`
+		Fields  Fields    `json:"fields,omitempty"`
+		Audio   []Audio   `json:"audio,omitempty"`
+		Video   []Video   `json:"video,omitempty"`
+		Picture []Picture `json:"picture,omitempty"`
 	}
 
 	// Fields represents the main fields for a Anki Note
@@ -138,4 +153,18 @@ func (nm *notesManager) Get(query string) (*[]ResultNotesInfo, *errors.RestErr) 
 		return nil, restErr
 	}
 	return notes, nil
+}
+
+func (nm *notesManager) Update(note UpdateNote) *errors.RestErr {
+	params := ParamsUpdateNote{
+		Note: &note,
+	}
+	// The return of this should always be 'null' int64 may not be the best
+	// type here
+	_, restErr := post[int64](nm.Client, ActionUpdateNoteFields, &params)
+	if restErr != nil {
+		return restErr
+	}
+
+	return nil
 }
