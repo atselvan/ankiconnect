@@ -39,10 +39,7 @@ type (
 	}
 
 	// Fields represents the main fields for a Anki Note
-	Fields struct {
-		Front string `json:"Front,omitempty"`
-		Back  string `json:"Back,omitempty"`
-	}
+	Fields map[string]string
 
 	// Options represents note options.
 	Options struct {
@@ -85,8 +82,8 @@ type (
 
 // Add adds a new note in Anki.
 // The method returns an error if:
-//	- the api request to ankiconnect fails.
-//	- the api returns a http error.
+//     - the api request to ankiconnect fails.
+//     - the api returns a http error.
 func (nm *notesManager) Add(note Note) *errors.RestErr {
 	params := ParamsCreateNote{
 		Note: &note,
