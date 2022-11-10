@@ -26,7 +26,8 @@ type (
 		// supported interfaces
 		Decks DecksManager
 		Notes NotesManager
-		Sync SyncManager
+		Sync  SyncManager
+		Cards CardsManager
 	}
 
 	// RequestPayload represents the request payload for anki connect api.
@@ -60,6 +61,7 @@ func NewClient() *Client {
 	c.Decks = &decksManager{Client: c}
 	c.Notes = &notesManager{Client: c}
 	c.Sync = &syncManager{Client: c}
+	c.Cards = &cardsManager{Client: c}
 
 	return c
 }

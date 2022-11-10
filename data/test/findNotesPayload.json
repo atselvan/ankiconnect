@@ -1,0 +1,7 @@
+{
+    "action": "findNotes",
+    "version": 6,
+    "params": {
+        "query": "deck:current"
+    }
+}
