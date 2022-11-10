@@ -98,6 +98,8 @@ type (
 	// Audio can be used to add a audio file to a Anki Note.
 	Audio struct {
 		URL      string   `json:"url,omitempty"`
+		Data     string   `json:"data,omitempty"`
+		Path     string   `json:"path,omitempty"`
 		Filename string   `json:"filename,omitempty"`
 		SkipHash string   `json:"skipHash,omitempty"`
 		Fields   []string `json:"fields,omitempty"`
@@ -106,6 +108,8 @@ type (
 	// Video can be used to add a video file to a Anki Note.
 	Video struct {
 		URL      string   `json:"url,omitempty"`
+		Data     string   `json:"data,omitempty"`
+		Path     string   `json:"path,omitempty"`
 		Filename string   `json:"filename,omitempty"`
 		SkipHash string   `json:"skipHash,omitempty"`
 		Fields   []string `json:"fields,omitempty"`
@@ -114,6 +118,8 @@ type (
 	// Picture can be used to add a picture to a Anki Note.
 	Picture struct {
 		URL      string   `json:"url,omitempty"`
+		Data     string   `json:"data,omitempty"`
+		Path     string   `json:"path,omitempty"`
 		Filename string   `json:"filename,omitempty"`
 		SkipHash string   `json:"skipHash,omitempty"`
 		Fields   []string `json:"fields,omitempty"`
