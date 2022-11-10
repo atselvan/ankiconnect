@@ -84,7 +84,7 @@ func TestNotesManager_Get(t *testing.T) {
 
 	})
 
-	t.Run("error", func(t *testing.T) {
+	t.Run("errorFailSearch", func(t *testing.T) {
 		httpmock.ActivateNonDefault(client.httpClient.GetClient())
 		defer httpmock.DeactivateAndReset()
 

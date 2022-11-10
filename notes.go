@@ -141,24 +141,22 @@ func (nm *notesManager) Add(note Note) *errors.RestErr {
 	return nil
 }
 
-func (nm *notesManager) Get(query string) (*[]ResultNotesInfo, *errors.RestErr) {
+func (nm *notesManager) Search(query string) (*[]int64, *errors.RestErr) {
 	findParams := ParamsFindNotes{
 		Query: query,
 	}
-	noteIds, restErr := post[[]int64](nm.Client, ActionFindNotes, &findParams)
+	return  post[[]int64](nm.Client, ActionFindNotes, &findParams)
+}
+
+func (nm *notesManager) Get(query string) (*[]ResultNotesInfo, *errors.RestErr) {
+  noteIds, restErr := nm.Search(query)
 	if restErr != nil {
 		return nil, restErr
 	}
-
 	infoParams := ParamsNotesInfo{
 		Notes: noteIds,
 	}
-
-	notes, restErr := post[[]ResultNotesInfo](nm.Client, ActionNotesInfo, &infoParams)
-	if restErr != nil {
-		return nil, restErr
-	}
-	return notes, nil
+	return post[[]ResultNotesInfo](nm.Client, ActionNotesInfo, &infoParams)
 }
 
 func (nm *notesManager) Update(note UpdateNote) *errors.RestErr {
@@ -168,9 +166,5 @@ func (nm *notesManager) Update(note UpdateNote) *errors.RestErr {
 	// The return of this should always be 'null' int64 may not be the best
 	// type here
 	_, restErr := post[int64](nm.Client, ActionUpdateNoteFields, &params)
-	if restErr != nil {
-		return restErr
-	}
-
-	return nil
+	return restErr 
 }

@@ -45,4 +45,21 @@ func TestCardsManager_Add(t *testing.T) {
 
 	})
 
+	t.Run("errorFailSearch", func(t *testing.T) {
+		httpmock.ActivateNonDefault(client.httpClient.GetClient())
+		defer httpmock.DeactivateAndReset()
+
+		result := new(Result[string])
+		loadTestData(t, testDataPath+errorTestDataFileName, result)
+		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
+		assert.NoError(t, err)
+
+		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+
+		_, restErr := client.Cards.Get("deck:current")
+		assert.NotNil(t, restErr)
+		assert.Equal(t, http.StatusBadRequest, restErr.StatusCode)
+		assert.Equal(t, "some error message", restErr.Message)
+	})
+
 }

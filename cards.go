@@ -49,23 +49,20 @@ type (
 	}
 )
 
-func (cm *cardsManager) Get(query string) (*[]ResultCardsInfo, *errors.RestErr) {
+func (cm *cardsManager) Search(query string) (*[]int64, *errors.RestErr) {
 	findParams := ParamsFindCards{
 		Query: query,
 	}
-	cardsIds, restErr := post[[]int64](cm.Client, ActionFindCards, &findParams)
+	return post[[]int64](cm.Client, ActionFindCards, &findParams)
+}
+
+func (cm *cardsManager) Get(query string) (*[]ResultCardsInfo, *errors.RestErr) {
+  cardIds, restErr := cm.Search(query)
 	if restErr != nil {
 		return nil, restErr
 	}
-
 	infoParams := ParamsCardsInfo{
-		Cards: cardsIds,
+		Cards: cardIds,
 	}
-
-	cards, restErr := post[[]ResultCardsInfo](cm.Client, ActionCardsInfo, &infoParams)
-	if restErr != nil {
-		return nil, restErr
-	}
-	return cards, nil
-
+	return  post[[]ResultCardsInfo](cm.Client, ActionCardsInfo, &infoParams)
 }

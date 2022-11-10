@@ -89,6 +89,44 @@ if restErr != nil {
 }
 ```
 
+### Get Notes
+
+```go
+client := ankiconnect.NewClient()
+
+// Get the Note Ids of cards due today
+nodeIds, restErr := client.Notes.Get("prop:due=0")
+if restErr != nil {
+	log.Fatal(restErr)
+}
+
+// Get the Note data of cards due today
+notes, restErr := client.Notes.Get("prop:due=0")
+if restErr != nil {
+	log.Fatal(restErr)
+}
+
+```
+
+### Get Cards
+
+```go
+client := ankiconnect.NewClient()
+
+// Get the Card Ids of cards due today
+nodeIds, restErr := client.Cards.Get("prop:due=0")
+if restErr != nil {
+	log.Fatal(restErr)
+}
+
+// Get the Card data of cards due today
+notes, restErr := client.Cards.Get("prop:due=0")
+if restErr != nil {
+	log.Fatal(restErr)
+}
+
+```
+
 ### Sync local data to Anki Cloud
 ```go
 client := ankiconnect.NewClient()
