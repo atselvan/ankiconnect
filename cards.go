@@ -10,6 +10,7 @@ const (
 type (
 	// Notes manager describes the interface that can be used to perform operation on the notes in a deck.
 	CardsManager interface {
+		Search(query string) (*[]int64, *errors.RestErr)
 		Get(query string) (*[]ResultCardsInfo, *errors.RestErr)
 	}
 

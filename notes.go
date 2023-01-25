@@ -15,6 +15,7 @@ type (
 	// Notes manager describes the interface that can be used to perform operation on the notes in a deck.
 	NotesManager interface {
 		Add(note Note) *errors.RestErr
+		Search(query string) (*[]int64, *errors.RestErr)
 		Get(query string) (*[]ResultNotesInfo, *errors.RestErr)
 		Update(note UpdateNote) *errors.RestErr
 	}
