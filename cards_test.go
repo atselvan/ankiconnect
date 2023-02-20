@@ -8,35 +8,40 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCardsManager_Add(t *testing.T) {
+func TestCardsManager_Get(t *testing.T) {
+	findCardsPayload := []byte(`{
+    "action": "findCards",
+    "version": 6,
+    "params": {
+        "query": "deck:current"
+    }
+  }`)
+
+	cardsInfoPayload := []byte(`{
+    "action": "cardsInfo",
+    "version": 6,
+    "params": {
+        "cards": [1498938915662, 1502098034048]
+    }
+  }`)
+
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		// Get will do two api calls, first findCards to get the card id's
-		findResult := new(Result[[]int64])
-		loadTestData(t, testDataPath+ActionFindCards+"Result"+jsonExt, findResult)
-		findResponse, err := httpmock.NewJsonResponse(http.StatusOK, findResult)
-		assert.NoError(t, err)
+		registerMultipleVerifiedPayloads(t,
+			[][2][]byte{
+				// Get will do two api calls, first findCards to get the card id's
+				{
+					findCardsPayload,
+					loadTestResult(t, ActionFindCards),
+				},
+				// Then cardsInfo to transform those into actual anki cards
+				{
+					cardsInfoPayload,
+					loadTestResult(t, ActionCardsInfo),
+				},
+			})
 
-		// Then cardsInfo to transform those into actual anki cards
-		infoResult := new(Result[[]ResultCardsInfo])
-		loadTestData(t, testDataPath+ActionCardsInfo+"Result"+jsonExt, infoResult)
-		assert.Equal(t, infoResult.Result[0].ModelName, "Basic")
-		infoResponse, err := httpmock.NewJsonResponse(http.StatusOK, infoResult)
-		assert.NoError(t, err)
-
-		responder := httpmock.ResponderFromMultipleResponses(
-			[]*http.Response{
-				findResponse,
-				infoResponse,
-			},
-		)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
-
-		// If possible test to make sure the payload is properly transformed into
-		// findNotesPayload.json (which seems to be attempted in above tests but is not
-		// actually working)
 		payload := "deck:current"
 		notes, restErr := client.Cards.Get(payload)
 		assert.Nil(t, restErr)

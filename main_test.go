@@ -32,6 +32,24 @@ var (
 }`)
 )
 
+// For each api call implemented, you test it as follows
+//
+//  1. Get the expected request and response from api description found at
+//     https://github.com/FooSoft/anki-connect
+//
+//  2. If the json blob is tiny, insert it in the test as a multiline string
+//     if its pretty large, it can be saved under
+//     data/test/{apiName}{Result/Payload}.json
+//
+//  3. You can then call some of the below helper functions to properly mock
+//     the http requests / responses
+//
+// 4) Do some assertions on the result of the api call
+//
+// The idea behind the this is that we want our tests to construct a go struct
+// in the same way as the end user would using our defined structs. We then ensure
+// that that go struct get correctly transformed into the json format expected by
+// anki connect
 func TestMain(m *testing.M) {
 
 	httpmock.ActivateNonDefault(client.httpClient.GetClient())
@@ -40,6 +58,7 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+// If you want your test to fail, call this before calling the api call
 func registerErrorResponse(t *testing.T) {
 	json.Unmarshal(genericErrorJson, &errorResponse)
 	responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
@@ -47,11 +66,8 @@ func registerErrorResponse(t *testing.T) {
 
 	httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
 }
-func loadTestData(t *testing.T, path string, out interface{}) {
-	err := fileutils.ReadJsonFile(path, &out)
-	assert.NoError(t, err)
-}
 
+// If you need to load a http request from a file, use this
 func loadTestPayload(t *testing.T, ankiConnectAction string) []byte {
 	bytes, err := fileutils.ReadFile(
 		testDataPath + ankiConnectAction + "Payload.json")
@@ -59,6 +75,7 @@ func loadTestPayload(t *testing.T, ankiConnectAction string) []byte {
 	return bytes
 }
 
+// If you need to load a http response from a file, use this
 func loadTestResult(t *testing.T, ankiConnectAction string) []byte {
 	bytes, err := fileutils.ReadFile(
 		testDataPath + ankiConnectAction + "Result.json")
@@ -66,9 +83,21 @@ func loadTestResult(t *testing.T, ankiConnectAction string) []byte {
 	return bytes
 }
 
-func registerVerifiedPayload(t *testing.T, payloadJson []byte, responseJson []byte) {
+// The loaded json strings then can be passed to this function, which will
+// for each pair, verify that the client produces the correct json encoding
+// and send the desired response
+func registerMultipleVerifiedPayloads(t *testing.T, pairs [][2][]byte) {
+	currentIndex := 0
 	httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl,
 		func(req *http.Request) (*http.Response, error) {
+
+			// If this assert fails the test is misconfigured
+			assert.Less(t, currentIndex, len(pairs), "Responder called too many times")
+
+			currentPair := pairs[currentIndex]
+			payloadJson := currentPair[0]
+			responseJson := currentPair[1]
+			currentIndex += 1
 
 			bodyBytes, err := io.ReadAll(req.Body)
 			assert.NoError(t, err)
@@ -86,4 +115,9 @@ func registerVerifiedPayload(t *testing.T, payloadJson []byte, responseJson []by
 			return resp, nil
 		},
 	)
+}
+
+// If you only are doing one Payload/Response, you can use this function
+func registerVerifiedPayload(t *testing.T, payloadJson []byte, responseJson []byte) {
+	registerMultipleVerifiedPayloads(t, [][2][]byte{{payloadJson, responseJson}})
 }

@@ -63,7 +63,7 @@ func TestNotesManager_Add(t *testing.T) {
 	addNoteResult := []byte(`{
     "result": 1659294247478,
     "error": null
-}`)
+  }`)
 
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
@@ -91,34 +91,30 @@ func TestNotesManager_Add(t *testing.T) {
 }
 
 func TestNotesManager_Get(t *testing.T) {
+	notesInfoPayload := []byte(`{
+    "action": "notesInfo",
+    "version": 6,
+    "params": {
+        "notes": [1502298033753]
+    }
+  }`)
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		// Get will do two api calls, first findNotes to get the note id's
-		findResult := new(Result[[]int64])
-		loadTestData(t, testDataPath+ActionFindNotes+"Result"+jsonExt, findResult)
-		findResponse, err := httpmock.NewJsonResponse(http.StatusOK, findResult)
-		assert.NoError(t, err)
+		registerMultipleVerifiedPayloads(t,
+			[][2][]byte{
+				// Get will do two api calls, first findNotes to get the card id's
+				{
+					loadTestPayload(t, ActionFindNotes),
+					loadTestResult(t, ActionFindNotes),
+				},
+				// Then notesInfo to transform those into actual anki cards
+				{
+					notesInfoPayload,
+					loadTestResult(t, ActionNotesInfo),
+				},
+			})
 
-		// Then notesInfo to transform those into actual anki notes
-		infoResult := new(Result[[]ResultNotesInfo])
-		loadTestData(t, testDataPath+ActionNotesInfo+"Result"+jsonExt, infoResult)
-		assert.Equal(t, infoResult.Result[0].ModelName, "Basic")
-		infoResponse, err := httpmock.NewJsonResponse(http.StatusOK, infoResult)
-		assert.NoError(t, err)
-
-		responder := httpmock.ResponderFromMultipleResponses(
-			[]*http.Response{
-				findResponse,
-				infoResponse,
-			},
-		)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
-
-		// If possible test to make sure the payload is properly transformed into
-		// findNotesPayload.json (which seems to be attempted in above tests but is not
-		// actually working)
 		payload := "deck:current"
 		notes, restErr := client.Notes.Get(payload)
 		assert.Nil(t, restErr)
