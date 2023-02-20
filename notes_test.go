@@ -29,14 +29,13 @@ func TestNotesManager_Add(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[string])
-		loadTestData(t, testDataPath+errorTestDataFileName, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
+		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
 		assert.NoError(t, err)
 
 		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
 
 		note := new(Note)
+		result := new(Result[string])
 		loadTestData(t, testDataPath+ActionAddNote+"Payload"+jsonExt, result)
 		restErr := client.Notes.Add(*note)
 		assert.NotNil(t, restErr)
@@ -84,9 +83,7 @@ func TestNotesManager_Get(t *testing.T) {
 	t.Run("errorFailSearch", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[string])
-		loadTestData(t, testDataPath+errorTestDataFileName, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
+		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
 		assert.NoError(t, err)
 
 		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)

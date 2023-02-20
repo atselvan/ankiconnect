@@ -14,10 +14,6 @@ const (
 	ankiConnectTestVersion = 2
 )
 
-var (
-	client = NewClient()
-)
-
 func TestClient_NewClient(t *testing.T) {
 	c := NewClient()
 	assert.NotNil(t, c)

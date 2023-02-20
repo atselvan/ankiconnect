@@ -28,9 +28,7 @@ func TestDecksManager_GetAll(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[[]string])
-		loadTestData(t, testDataPath+errorTestDataFileName, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
+		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
 		assert.NoError(t, err)
 
 		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
@@ -71,9 +69,7 @@ func TestDecksManager_Create(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[string])
-		loadTestData(t, testDataPath+errorTestDataFileName, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
+		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
 		assert.NoError(t, err)
 
 		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
@@ -103,9 +99,7 @@ func TestDecksManagerDelete(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[string])
-		loadTestData(t, testDataPath+errorTestDataFileName, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
+		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
 		assert.NoError(t, err)
 
 		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
