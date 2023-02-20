@@ -14,10 +14,9 @@ import (
 )
 
 const (
-	testDataPath          = "data/test/"
-	errorTestDataFileName = "error.json"
-	jsonExt               = ".json"
-	genericErrorJson      = `{
+	testDataPath     = "data/test/"
+	jsonExt          = ".json"
+	genericErrorJson = `{
     "result": null,
     "error": "some error message"
 }`
@@ -29,7 +28,6 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	json.Unmarshal([]byte(genericErrorJson), &errorResponse)
 
 	httpmock.ActivateNonDefault(client.httpClient.GetClient())
 	defer httpmock.DeactivateAndReset()
@@ -38,6 +36,7 @@ func TestMain(m *testing.M) {
 }
 
 func registerErrorResponse(t *testing.T) {
+	json.Unmarshal([]byte(genericErrorJson), &errorResponse)
 	responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
 	assert.NoError(t, err)
 
@@ -48,21 +47,17 @@ func loadTestData(t *testing.T, path string, out interface{}) {
 	assert.NoError(t, err)
 }
 
-func registerVerifiedPayload(
-	t *testing.T, payloadFilepath string, responseFilepath string) {
+func registerVerifiedPayloadDirect(t *testing.T, payloadJson string, responseJson string) {
 
 	httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl,
 		func(req *http.Request) (*http.Response, error) {
 
-			bytes, err := fileutils.ReadFile(payloadFilepath)
-			assert.NoError(t, err)
-
 			bodyBytes, err := io.ReadAll(req.Body)
 			assert.NoError(t, err)
 
-			require.JSONEq(t, string(bytes), string(bodyBytes))
+			require.JSONEq(t, payloadJson, string(bodyBytes))
 			result := new(Result[int64])
-			loadTestData(t, responseFilepath, result)
+			json.Unmarshal([]byte(responseJson), result)
 
 			resp, err := httpmock.NewJsonResponse(http.StatusOK, result)
 			assert.NoError(t, err)
@@ -70,5 +65,16 @@ func registerVerifiedPayload(
 			return resp, nil
 		},
 	)
+
+}
+
+func registerVerifiedPayload(
+	t *testing.T, payloadFilepath string, responseFilepath string) {
+
+	payloadBytes, err := fileutils.ReadFile(payloadFilepath)
+	assert.NoError(t, err)
+	responseBytes, err := fileutils.ReadFile(responseFilepath)
+	assert.NoError(t, err)
+	registerVerifiedPayloadDirect(t, string(payloadBytes), string(responseBytes))
 
 }

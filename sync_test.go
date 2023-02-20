@@ -9,14 +9,20 @@ import (
 )
 
 func TestSyncManager_Trigger(t *testing.T) {
+
+	syncRequest := `{
+  "action": "sync",
+  "version": 6
+}`
+	syncResult := `{
+  "result": null,
+  "error": null
+}`
+
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[string])
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+		registerVerifiedPayloadDirect(t, syncRequest, syncResult)
 
 		restErr := client.Sync.Trigger()
 		assert.Nil(t, restErr)

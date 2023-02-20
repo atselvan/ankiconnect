@@ -9,57 +9,55 @@ import (
 )
 
 func TestNotesManager_Add(t *testing.T) {
-	createNote := func() Note {
-		return Note{
-			DeckName:  "test",
-			ModelName: "Basic-a39a1",
-			Fields: Fields{
-				"Front": "front content",
-				"Back":  "back content",
+	createNoteStruct := Note{
+		DeckName:  "test",
+		ModelName: "Basic-a39a1",
+		Fields: Fields{
+			"Front": "front content",
+			"Back":  "back content",
+		},
+		Options: &Options{
+			AllowDuplicate: false,
+			DuplicateScope: "deck",
+			DuplicateScopeOptions: &DuplicateScopeOptions{
+				DeckName:       "test",
+				CheckChildren:  false,
+				CheckAllModels: false,
 			},
-			Options: &Options{
-				AllowDuplicate: false,
-				DuplicateScope: "deck",
-				DuplicateScopeOptions: &DuplicateScopeOptions{
-					DeckName:       "test",
-					CheckChildren:  false,
-					CheckAllModels: false,
+		},
+		Tags: []string{
+			"yomichan",
+		},
+		Audio: []Audio{
+			{
+				URL:      "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ",
+				Filename: "yomichan_ねこ_猫.mp3",
+				SkipHash: "7e2c2f954ef6051373ba916f000168dc",
+				Fields: []string{
+					"Front",
 				},
 			},
-			Tags: []string{
-				"yomichan",
-			},
-			Audio: []Audio{
-				{
-					URL:      "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ",
-					Filename: "yomichan_ねこ_猫.mp3",
-					SkipHash: "7e2c2f954ef6051373ba916f000168dc",
-					Fields: []string{
-						"Front",
-					},
+		},
+		Video: []Video{
+			{
+				URL:      "https://cdn.videvo.net/videvo_files/video/free/2015-06/small_watermarked/Contador_Glam_preview.mp4",
+				Filename: "countdown.mp4",
+				SkipHash: "4117e8aab0d37534d9c8eac362388bbe",
+				Fields: []string{
+					"Back",
 				},
 			},
-			Video: []Video{
-				{
-					URL:      "https://cdn.videvo.net/videvo_files/video/free/2015-06/small_watermarked/Contador_Glam_preview.mp4",
-					Filename: "countdown.mp4",
-					SkipHash: "4117e8aab0d37534d9c8eac362388bbe",
-					Fields: []string{
-						"Back",
-					},
+		},
+		Picture: []Picture{
+			{
+				URL:      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/A_black_cat_named_Tilly.jpg/220px-A_black_cat_named_Tilly.jpg",
+				Filename: "black_cat.jpg",
+				SkipHash: "8d6e4646dfae812bf39651b59d7429ce",
+				Fields: []string{
+					"Back",
 				},
 			},
-			Picture: []Picture{
-				{
-					URL:      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/A_black_cat_named_Tilly.jpg/220px-A_black_cat_named_Tilly.jpg",
-					Filename: "black_cat.jpg",
-					SkipHash: "8d6e4646dfae812bf39651b59d7429ce",
-					Fields: []string{
-						"Back",
-					},
-				},
-			},
-		}
+		},
 	}
 
 	t.Run("success", func(t *testing.T) {
@@ -69,7 +67,7 @@ func TestNotesManager_Add(t *testing.T) {
 			testDataPath+ActionAddNote+"Payload"+jsonExt,
 			testDataPath+ActionAddNote+"Result"+jsonExt)
 
-		note := createNote()
+		note := createNoteStruct
 		restErr := client.Notes.Add(note)
 		assert.Nil(t, restErr)
 	})
@@ -79,10 +77,8 @@ func TestNotesManager_Add(t *testing.T) {
 
 		registerErrorResponse(t)
 
-		note := new(Note)
-		result := new(Result[string])
-		loadTestData(t, testDataPath+ActionAddNote+"Payload"+jsonExt, result)
-		restErr := client.Notes.Add(*note)
+		note := createNoteStruct
+		restErr := client.Notes.Add(note)
 		assert.NotNil(t, restErr)
 		assert.Equal(t, http.StatusBadRequest, restErr.StatusCode)
 		assert.Equal(t, "some error message", restErr.Message)
@@ -138,34 +134,32 @@ func TestNotesManager_Get(t *testing.T) {
 }
 
 func TestNotesManager_Update(t *testing.T) {
+	updateNoteStruct := UpdateNote{
+		Id: 1514547547030,
+		Fields: Fields{
+			"Front": "new front content",
+			"Back":  "new back content",
+		},
+		Audio: []Audio{
+			{
+				URL:      "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ",
+				Filename: "yomichan_ねこ_猫.mp3",
+				SkipHash: "7e2c2f954ef6051373ba916f000168dc",
+				Fields: []string{
+					"Front",
+				},
+			},
+		},
+	}
+
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[int64])
-		loadTestData(t, testDataPath+ActionUpdateNoteFields+"Result"+jsonExt, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
-		assert.NoError(t, err)
+		registerVerifiedPayload(t,
+			testDataPath+ActionUpdateNoteFields+"Payload"+jsonExt,
+			testDataPath+ActionUpdateNoteFields+"Result"+jsonExt)
 
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
-
-		noteRequest := UpdateNote{
-			Id: 1514547547030,
-			Fields: Fields{
-				"Front": "new front content",
-				"Back":  "new back content",
-			},
-			Audio: []Audio{
-				{
-					URL:      "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ",
-					Filename: "yomichan_ねこ_猫.mp3",
-					SkipHash: "7e2c2f954ef6051373ba916f000168dc",
-					Fields: []string{
-						"Front",
-					},
-				},
-			},
-		}
-		restErr := client.Notes.Update(noteRequest)
+		restErr := client.Notes.Update(updateNoteStruct)
 		assert.Nil(t, restErr)
 
 	})
