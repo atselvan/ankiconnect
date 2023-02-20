@@ -60,12 +60,17 @@ func TestNotesManager_Add(t *testing.T) {
 		},
 	}
 
+  addNoteResult := []byte(`{
+    "result": 1659294247478,
+    "error": null
+}`)
+
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
 		registerVerifiedPayload(t,
 			loadTestPayload(t, ActionAddNote),
-			loadTestResult(t, ActionAddNote))
+      addNoteResult)
 
 		note := createNoteStruct
 		id, restErr := client.Notes.Add(note)
@@ -158,7 +163,7 @@ func TestNotesManager_Update(t *testing.T) {
 
 		registerVerifiedPayload(t,
 			loadTestPayload(t, ActionUpdateNoteFields),
-			loadTestResult(t, ActionUpdateNoteFields))
+      genericSuccessJson)
 
 		restErr := client.Notes.Update(updateNoteStruct)
 		assert.Nil(t, restErr)
