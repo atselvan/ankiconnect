@@ -60,7 +60,7 @@ func TestNotesManager_Add(t *testing.T) {
 		},
 	}
 
-  addNoteResult := []byte(`{
+	addNoteResult := []byte(`{
     "result": 1659294247478,
     "error": null
 }`)
@@ -70,11 +70,10 @@ func TestNotesManager_Add(t *testing.T) {
 
 		registerVerifiedPayload(t,
 			loadTestPayload(t, ActionAddNote),
-      addNoteResult)
+			addNoteResult)
 
 		note := createNoteStruct
-		id, restErr := client.Notes.Add(note)
-		assert.Equal(t, int64(1659294247478), *id)
+		restErr := client.Notes.Add(note)
 		assert.Nil(t, restErr)
 	})
 
@@ -84,7 +83,7 @@ func TestNotesManager_Add(t *testing.T) {
 		registerErrorResponse(t)
 
 		note := createNoteStruct
-		_, restErr := client.Notes.Add(note)
+		restErr := client.Notes.Add(note)
 		assert.NotNil(t, restErr)
 		assert.Equal(t, http.StatusBadRequest, restErr.StatusCode)
 		assert.Equal(t, "some error message", restErr.Message)
@@ -163,7 +162,7 @@ func TestNotesManager_Update(t *testing.T) {
 
 		registerVerifiedPayload(t,
 			loadTestPayload(t, ActionUpdateNoteFields),
-      genericSuccessJson)
+			genericSuccessJson)
 
 		restErr := client.Notes.Update(updateNoteStruct)
 		assert.Nil(t, restErr)

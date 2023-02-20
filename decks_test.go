@@ -9,11 +9,11 @@ import (
 )
 
 func TestDecksManager_GetAll(t *testing.T) {
-  getAllRequest := []byte(`{
+	getAllRequest := []byte(`{
     "action": "deckNames",
     "version": 6
 }`)
-  getAllResult := []byte(`{
+	getAllResult := []byte(`{
     "result": [
         "Default",
         "Deck01",
@@ -24,7 +24,7 @@ func TestDecksManager_GetAll(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerVerifiedPayload(t, getAllRequest, getAllResult)
+		registerVerifiedPayload(t, getAllRequest, getAllResult)
 
 		decks, restErr := client.Decks.GetAll()
 		assert.NotNil(t, decks)
@@ -56,25 +56,24 @@ func TestDecksManager_GetAll(t *testing.T) {
 }
 
 func TestDecksManager_Create(t *testing.T) {
-  createRequest := []byte(`{
+	createRequest := []byte(`{
     "action": "createDeck",
     "version": 6,
     "params": {
         "deck": "Japanese::Tokyo"
     }
 }`)
-  createResponse := []byte(`{
+	createResponse := []byte(`{
     "result": 1659294179522,
     "error": null
 }`)
 
-
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerVerifiedPayload(t, createRequest, createResponse)
+		registerVerifiedPayload(t, createRequest, createResponse)
 
-    restErr := client.Decks.Create("Japanese::Tokyo")
+		restErr := client.Decks.Create("Japanese::Tokyo")
 		assert.Nil(t, restErr)
 	})
 
@@ -91,7 +90,7 @@ func TestDecksManager_Create(t *testing.T) {
 }
 
 func TestDecksManagerDelete(t *testing.T) {
-  deleteDeckRequest := []byte(`{
+	deleteDeckRequest := []byte(`{
     "action": "deleteDecks",
     "version": 6,
     "params": {
@@ -103,7 +102,7 @@ func TestDecksManagerDelete(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerVerifiedPayload(t, deleteDeckRequest, genericSuccessJson)
+		registerVerifiedPayload(t, deleteDeckRequest, genericSuccessJson)
 
 		restErr := client.Decks.Delete("test")
 		assert.Nil(t, restErr)
