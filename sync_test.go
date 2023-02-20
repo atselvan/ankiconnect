@@ -25,10 +25,7 @@ func TestSyncManager_Trigger(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerErrorResponse(t)
 
 		restErr := client.Sync.Trigger()
 		assert.NotNil(t, restErr)

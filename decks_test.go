@@ -28,10 +28,7 @@ func TestDecksManager_GetAll(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerErrorResponse(t)
 
 		decks, restErr := client.Decks.GetAll()
 		assert.Nil(t, decks)
@@ -69,10 +66,7 @@ func TestDecksManager_Create(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerErrorResponse(t)
 
 		restErr := client.Decks.Create("test")
 		assert.NotNil(t, restErr)
@@ -99,10 +93,7 @@ func TestDecksManagerDelete(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerErrorResponse(t)
 
 		restErr := client.Decks.Delete("test")
 		assert.NotNil(t, restErr)

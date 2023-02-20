@@ -47,10 +47,7 @@ func TestCardsManager_Add(t *testing.T) {
 	t.Run("errorFailSearch", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerErrorResponse(t)
 
 		_, restErr := client.Cards.Get("deck:current")
 		assert.NotNil(t, restErr)

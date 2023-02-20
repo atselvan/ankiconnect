@@ -29,10 +29,7 @@ func TestNotesManager_Add(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerErrorResponse(t)
 
 		note := new(Note)
 		result := new(Result[string])
@@ -83,10 +80,7 @@ func TestNotesManager_Get(t *testing.T) {
 	t.Run("errorFailSearch", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerErrorResponse(t)
 
 		_, restErr := client.Notes.Get("deck:current")
 		assert.NotNil(t, restErr)

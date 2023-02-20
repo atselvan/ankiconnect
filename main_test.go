@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
   "encoding/json"
+	"net/http"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/privatesquare/bkst-go-utils/utils/fileutils"
@@ -34,7 +35,12 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+func registerErrorResponse(t *testing.T) {
+		responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
+		assert.NoError(t, err)
 
+		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+}
 func loadTestData(t *testing.T, path string, out interface{}) {
 	err := fileutils.ReadJsonFile(path, &out)
 	assert.NoError(t, err)
