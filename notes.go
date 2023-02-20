@@ -14,7 +14,7 @@ const (
 type (
 	// Notes manager describes the interface that can be used to perform operation on the notes in a deck.
 	NotesManager interface {
-		Add(note Note) *errors.RestErr
+		Add(note Note) (*int64, *errors.RestErr)
 		Search(query string) (*[]int64, *errors.RestErr)
 		Get(query string) (*[]ResultNotesInfo, *errors.RestErr)
 		Update(note UpdateNote) *errors.RestErr
@@ -134,15 +134,15 @@ type (
 // The method returns an error if:
 //   - the api request to ankiconnect fails.
 //   - the api returns a http error.
-func (nm *notesManager) Add(note Note) *errors.RestErr {
+func (nm *notesManager) Add(note Note) (*int64, *errors.RestErr ){
 	params := ParamsCreateNote{
 		Note: &note,
 	}
-	_, restErr := post[int64](nm.Client, ActionAddNote, &params)
+	id, restErr := post[int64](nm.Client, ActionAddNote, &params)
 	if restErr != nil {
-		return restErr
+		return id, restErr
 	}
-	return nil
+	return id, nil
 }
 
 func (nm *notesManager) Search(query string) (*[]int64, *errors.RestErr) {

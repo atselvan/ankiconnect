@@ -68,7 +68,8 @@ func TestNotesManager_Add(t *testing.T) {
 			loadTestResult(t, ActionAddNote))
 
 		note := createNoteStruct
-		restErr := client.Notes.Add(note)
+		id, restErr := client.Notes.Add(note)
+		assert.Equal(t, int64(1659294247478), *id)
 		assert.Nil(t, restErr)
 	})
 
@@ -78,7 +79,7 @@ func TestNotesManager_Add(t *testing.T) {
 		registerErrorResponse(t)
 
 		note := createNoteStruct
-		restErr := client.Notes.Add(note)
+		_, restErr := client.Notes.Add(note)
 		assert.NotNil(t, restErr)
 		assert.Equal(t, http.StatusBadRequest, restErr.StatusCode)
 		assert.Equal(t, "some error message", restErr.Message)

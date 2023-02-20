@@ -1,6 +1,7 @@
 package ankiconnect
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -14,17 +15,21 @@ import (
 )
 
 const (
-	testDataPath     = "data/test/"
-	jsonExt          = ".json"
-	genericErrorJson = `{
-    "result": null,
-    "error": "some error message"
-}`
+	testDataPath = "data/test/"
+	jsonExt      = ".json"
 )
 
 var (
-	client        = NewClient()
-	errorResponse = Result[string]{}
+	client           = NewClient()
+	errorResponse    = Result[string]{}
+	genericErrorJson = []byte(`{
+    "result": null,
+    "error": "some error message"
+}`)
+	genericSuccessJson = []byte(`{
+    "result": null,
+    "error": null
+}`)
 )
 
 func TestMain(m *testing.M) {
@@ -36,7 +41,7 @@ func TestMain(m *testing.M) {
 }
 
 func registerErrorResponse(t *testing.T) {
-	json.Unmarshal([]byte(genericErrorJson), &errorResponse)
+	json.Unmarshal(genericErrorJson, &errorResponse)
 	responder, err := httpmock.NewJsonResponder(http.StatusOK, errorResponse)
 	assert.NoError(t, err)
 
@@ -69,11 +74,14 @@ func registerVerifiedPayload(t *testing.T, payloadJson []byte, responseJson []by
 			assert.NoError(t, err)
 
 			require.JSONEq(t, string(payloadJson), string(bodyBytes))
-			result := new(Result[int64])
-			json.Unmarshal([]byte(responseJson), result)
 
-			resp, err := httpmock.NewJsonResponse(http.StatusOK, result)
-			assert.NoError(t, err)
+			// We cannot use NewJsonResponse since that serializes an interface
+			// Instead we just craft our own response with the right headers
+			resp := &http.Response{
+				StatusCode: http.StatusOK,
+				Body:       io.NopCloser(bytes.NewBuffer(responseJson)),
+				Header:     http.Header{"Content-Type": []string{"application/json"}},
+			}
 
 			return resp, nil
 		},

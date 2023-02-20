@@ -9,15 +9,22 @@ import (
 )
 
 func TestDecksManager_GetAll(t *testing.T) {
+  getAllRequest := []byte(`{
+    "action": "deckNames",
+    "version": 6
+}`)
+  getAllResult := []byte(`{
+    "result": [
+        "Default",
+        "Deck01",
+        "Deck02"
+    ],
+    "error": null
+}`)
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[[]string])
-		loadTestData(t, testDataPath+ActionDeckNames+jsonExt, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerVerifiedPayload(t, getAllRequest, getAllResult)
 
 		decks, restErr := client.Decks.GetAll()
 		assert.NotNil(t, decks)
@@ -49,17 +56,25 @@ func TestDecksManager_GetAll(t *testing.T) {
 }
 
 func TestDecksManager_Create(t *testing.T) {
+  createRequest := []byte(`{
+    "action": "createDeck",
+    "version": 6,
+    "params": {
+        "deck": "Japanese::Tokyo"
+    }
+}`)
+  createResponse := []byte(`{
+    "result": 1659294179522,
+    "error": null
+}`)
+
+
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[int64])
-		loadTestData(t, testDataPath+ActionCreateDeck+jsonExt, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
-		assert.NoError(t, err)
+    registerVerifiedPayload(t, createRequest, createResponse)
 
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
-
-		restErr := client.Decks.Create("test")
+    restErr := client.Decks.Create("Japanese::Tokyo")
 		assert.Nil(t, restErr)
 	})
 
@@ -76,15 +91,19 @@ func TestDecksManager_Create(t *testing.T) {
 }
 
 func TestDecksManagerDelete(t *testing.T) {
+  deleteDeckRequest := []byte(`{
+    "action": "deleteDecks",
+    "version": 6,
+    "params": {
+        "decks": ["test"],
+        "cardsToo": true
+    }
+}`)
+
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[string])
-		loadTestData(t, testDataPath+ActionDeleteDecks+jsonExt, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
-		assert.NoError(t, err)
-
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
+    registerVerifiedPayload(t, deleteDeckRequest, genericSuccessJson)
 
 		restErr := client.Decks.Delete("test")
 		assert.Nil(t, restErr)
