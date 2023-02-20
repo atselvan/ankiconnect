@@ -47,15 +47,28 @@ func loadTestData(t *testing.T, path string, out interface{}) {
 	assert.NoError(t, err)
 }
 
-func registerVerifiedPayloadDirect(t *testing.T, payloadJson string, responseJson string) {
+func loadTestPayload(t *testing.T, ankiConnectAction string) []byte {
+	bytes, err := fileutils.ReadFile(
+		testDataPath + ankiConnectAction + "Payload.json")
+	assert.NoError(t, err)
+	return bytes
+}
 
+func loadTestResult(t *testing.T, ankiConnectAction string) []byte {
+	bytes, err := fileutils.ReadFile(
+		testDataPath + ankiConnectAction + "Result.json")
+	assert.NoError(t, err)
+	return bytes
+}
+
+func registerVerifiedPayload(t *testing.T, payloadJson []byte, responseJson []byte) {
 	httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl,
 		func(req *http.Request) (*http.Response, error) {
 
 			bodyBytes, err := io.ReadAll(req.Body)
 			assert.NoError(t, err)
 
-			require.JSONEq(t, payloadJson, string(bodyBytes))
+			require.JSONEq(t, string(payloadJson), string(bodyBytes))
 			result := new(Result[int64])
 			json.Unmarshal([]byte(responseJson), result)
 
@@ -65,16 +78,4 @@ func registerVerifiedPayloadDirect(t *testing.T, payloadJson string, responseJso
 			return resp, nil
 		},
 	)
-
-}
-
-func registerVerifiedPayload(
-	t *testing.T, payloadFilepath string, responseFilepath string) {
-
-	payloadBytes, err := fileutils.ReadFile(payloadFilepath)
-	assert.NoError(t, err)
-	responseBytes, err := fileutils.ReadFile(responseFilepath)
-	assert.NoError(t, err)
-	registerVerifiedPayloadDirect(t, string(payloadBytes), string(responseBytes))
-
 }

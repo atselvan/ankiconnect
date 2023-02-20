@@ -64,8 +64,8 @@ func TestNotesManager_Add(t *testing.T) {
 		defer httpmock.Reset()
 
 		registerVerifiedPayload(t,
-			testDataPath+ActionAddNote+"Payload"+jsonExt,
-			testDataPath+ActionAddNote+"Result"+jsonExt)
+			loadTestPayload(t, ActionAddNote),
+			loadTestResult(t, ActionAddNote))
 
 		note := createNoteStruct
 		restErr := client.Notes.Add(note)
@@ -156,8 +156,8 @@ func TestNotesManager_Update(t *testing.T) {
 		defer httpmock.Reset()
 
 		registerVerifiedPayload(t,
-			testDataPath+ActionUpdateNoteFields+"Payload"+jsonExt,
-			testDataPath+ActionUpdateNoteFields+"Result"+jsonExt)
+			loadTestPayload(t, ActionUpdateNoteFields),
+			loadTestResult(t, ActionUpdateNoteFields))
 
 		restErr := client.Notes.Update(updateNoteStruct)
 		assert.Nil(t, restErr)

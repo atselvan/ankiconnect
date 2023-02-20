@@ -10,19 +10,19 @@ import (
 
 func TestSyncManager_Trigger(t *testing.T) {
 
-	syncRequest := `{
+	syncRequest := []byte(`{
   "action": "sync",
   "version": 6
-}`
-	syncResult := `{
+}`)
+	syncResult := []byte(`{
   "result": null,
   "error": null
-}`
+}`)
 
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		registerVerifiedPayloadDirect(t, syncRequest, syncResult)
+		registerVerifiedPayload(t, syncRequest, syncResult)
 
 		restErr := client.Sync.Trigger()
 		assert.Nil(t, restErr)
