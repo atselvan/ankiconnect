@@ -10,8 +10,7 @@ import (
 
 func TestCardsManager_Add(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		// Get will do two api calls, first findCards to get the card id's
 		findResult := new(Result[[]int64])
@@ -46,8 +45,7 @@ func TestCardsManager_Add(t *testing.T) {
 	})
 
 	t.Run("errorFailSearch", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		result := new(Result[string])
 		loadTestData(t, testDataPath+errorTestDataFileName, result)

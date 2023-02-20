@@ -10,8 +10,7 @@ import (
 
 func TestNotesManager_Add(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		result := new(Result[int64])
 		loadTestData(t, testDataPath+ActionAddNote+"Result"+jsonExt, result)
@@ -28,8 +27,7 @@ func TestNotesManager_Add(t *testing.T) {
 	})
 
 	t.Run("error", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		result := new(Result[string])
 		loadTestData(t, testDataPath+errorTestDataFileName, result)
@@ -49,8 +47,7 @@ func TestNotesManager_Add(t *testing.T) {
 
 func TestNotesManager_Get(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		// Get will do two api calls, first findNotes to get the note id's
 		findResult := new(Result[[]int64])
@@ -85,8 +82,7 @@ func TestNotesManager_Get(t *testing.T) {
 	})
 
 	t.Run("errorFailSearch", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		result := new(Result[string])
 		loadTestData(t, testDataPath+errorTestDataFileName, result)
@@ -104,8 +100,7 @@ func TestNotesManager_Get(t *testing.T) {
 
 func TestNotesManager_Update(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		result := new(Result[int64])
 		loadTestData(t, testDataPath+ActionUpdateNoteFields+"Result"+jsonExt, result)

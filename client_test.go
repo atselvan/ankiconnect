@@ -61,24 +61,20 @@ func TestClient_SetSyncManager(t *testing.T) {
 
 func TestClient_Ping(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		c := NewClient()
-		httpmock.ActivateNonDefault(c.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		responder, err := httpmock.NewJsonResponder(http.StatusOK, "")
 		assert.NoError(t, err)
 		httpmock.RegisterResponder(http.MethodGet, ankiConnectUrl, responder)
 
-		restErr := c.Ping()
+		restErr := client.Ping()
 		assert.Nil(t, restErr)
 	})
 
 	t.Run("failure", func(t *testing.T) {
-		c := NewClient()
-		httpmock.ActivateNonDefault(c.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
-		restErr := c.Ping()
+		restErr := client.Ping()
 		assert.NotNil(t, restErr)
 		assert.Equal(t, http.StatusServiceUnavailable, restErr.StatusCode)
 		assert.Equal(t, ankiConnectPingErrMsg, restErr.Message)

@@ -10,8 +10,7 @@ import (
 
 func TestSyncManager_Trigger(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		result := new(Result[string])
 		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
@@ -24,8 +23,7 @@ func TestSyncManager_Trigger(t *testing.T) {
 	})
 
 	t.Run("error", func(t *testing.T) {
-		httpmock.ActivateNonDefault(client.httpClient.GetClient())
-		defer httpmock.DeactivateAndReset()
+		defer httpmock.Reset()
 
 		result := new(Result[string])
 		loadTestData(t, testDataPath+errorTestDataFileName, result)
