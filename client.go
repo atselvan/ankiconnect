@@ -28,7 +28,7 @@ type (
 		Notes NotesManager
 		Sync  SyncManager
 		Cards CardsManager
-    Media MediaManager
+		Media MediaManager
 	}
 
 	// RequestPayload represents the request payload for anki connect api.
@@ -63,7 +63,7 @@ func NewClient() *Client {
 	c.Notes = &notesManager{Client: c}
 	c.Sync = &syncManager{Client: c}
 	c.Cards = &cardsManager{Client: c}
-  c.Media = &mediaManager{Client: c}
+	c.Media = &mediaManager{Client: c}
 
 	return c
 }

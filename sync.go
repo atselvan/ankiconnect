@@ -13,15 +13,15 @@ type (
 	}
 
 	// syncManager implements SyncManager
-	syncManager struct{
+	syncManager struct {
 		Client *Client
 	}
 )
 
 // Trigger syncs local Anki data to Anki web.
 // The method returns an error if:
-//	- the api request to ankiconnect fails.
-//	- the api returns a http error.
+//   - the api request to ankiconnect fails.
+//   - the api returns a http error.
 func (sm *syncManager) Trigger() *errors.RestErr {
 	_, restErr := post[string, ParamsDefault](sm.Client, ActionSync, nil)
 	if restErr != nil {

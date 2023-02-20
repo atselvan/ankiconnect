@@ -25,7 +25,7 @@ func TestSyncManager_Trigger(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerErrorResponse(t)
+		registerErrorResponse(t)
 
 		restErr := client.Sync.Trigger()
 		assert.NotNil(t, restErr)

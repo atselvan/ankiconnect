@@ -18,7 +18,7 @@ func TestCardsManager_Add(t *testing.T) {
 		findResponse, err := httpmock.NewJsonResponse(http.StatusOK, findResult)
 		assert.NoError(t, err)
 
-		// Then cardsInfo to transform those into actual anki cards 
+		// Then cardsInfo to transform those into actual anki cards
 		infoResult := new(Result[[]ResultCardsInfo])
 		loadTestData(t, testDataPath+ActionCardsInfo+"Result"+jsonExt, infoResult)
 		assert.Equal(t, infoResult.Result[0].ModelName, "Basic")
@@ -47,7 +47,7 @@ func TestCardsManager_Add(t *testing.T) {
 	t.Run("errorFailSearch", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerErrorResponse(t)
+		registerErrorResponse(t)
 
 		_, restErr := client.Cards.Get("deck:current")
 		assert.NotNil(t, restErr)

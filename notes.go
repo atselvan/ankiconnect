@@ -84,16 +84,19 @@ type (
 
 	// Options represents note options.
 	Options struct {
-		AllowDuplicate        bool                   `json:"allowDuplicate,omitempty"`
+		// Will default to false
+		AllowDuplicate        bool                   `json:"allowDuplicate"`
 		DuplicateScope        string                 `json:"duplicateScope,omitempty"`
 		DuplicateScopeOptions *DuplicateScopeOptions `json:"duplicateScopeOptions,omitempty"`
 	}
 
 	// DuplicateScopeOptions represents the options that control the duplication of a Anki Note.
 	DuplicateScopeOptions struct {
-		DeckName       string `json:"deckName,omitempty"`
-		CheckChildren  bool   `json:"checkChildren,omitempty"`
-		CheckAllModels bool   `json:"checkAllModels,omitempty"`
+		DeckName string `json:"deckName,omitempty"`
+		// Will default to false
+		CheckChildren bool `json:"checkChildren"`
+		// Will default to false
+		CheckAllModels bool `json:"checkAllModels"`
 	}
 
 	// Audio can be used to add a audio file to a Anki Note.
@@ -146,11 +149,11 @@ func (nm *notesManager) Search(query string) (*[]int64, *errors.RestErr) {
 	findParams := ParamsFindNotes{
 		Query: query,
 	}
-	return  post[[]int64](nm.Client, ActionFindNotes, &findParams)
+	return post[[]int64](nm.Client, ActionFindNotes, &findParams)
 }
 
 func (nm *notesManager) Get(query string) (*[]ResultNotesInfo, *errors.RestErr) {
-  noteIds, restErr := nm.Search(query)
+	noteIds, restErr := nm.Search(query)
 	if restErr != nil {
 		return nil, restErr
 	}
@@ -167,5 +170,5 @@ func (nm *notesManager) Update(note UpdateNote) *errors.RestErr {
 	// The return of this should always be 'null' int64 may not be the best
 	// type here
 	_, restErr := post[int64](nm.Client, ActionUpdateNoteFields, &params)
-	return restErr 
+	return restErr
 }

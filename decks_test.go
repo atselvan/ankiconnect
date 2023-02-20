@@ -28,7 +28,7 @@ func TestDecksManager_GetAll(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerErrorResponse(t)
+		registerErrorResponse(t)
 
 		decks, restErr := client.Decks.GetAll()
 		assert.Nil(t, decks)
@@ -66,7 +66,7 @@ func TestDecksManager_Create(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerErrorResponse(t)
+		registerErrorResponse(t)
 
 		restErr := client.Decks.Create("test")
 		assert.NotNil(t, restErr)
@@ -93,7 +93,7 @@ func TestDecksManagerDelete(t *testing.T) {
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerErrorResponse(t)
+		registerErrorResponse(t)
 
 		restErr := client.Decks.Delete("test")
 		assert.NotNil(t, restErr)
@@ -101,4 +101,3 @@ func TestDecksManagerDelete(t *testing.T) {
 		assert.Equal(t, "some error message", restErr.Message)
 	})
 }
-

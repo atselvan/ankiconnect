@@ -58,12 +58,12 @@ func (cm *cardsManager) Search(query string) (*[]int64, *errors.RestErr) {
 }
 
 func (cm *cardsManager) Get(query string) (*[]ResultCardsInfo, *errors.RestErr) {
-  cardIds, restErr := cm.Search(query)
+	cardIds, restErr := cm.Search(query)
 	if restErr != nil {
 		return nil, restErr
 	}
 	infoParams := ParamsCardsInfo{
 		Cards: cardIds,
 	}
-	return  post[[]ResultCardsInfo](cm.Client, ActionCardsInfo, &infoParams)
+	return post[[]ResultCardsInfo](cm.Client, ActionCardsInfo, &infoParams)
 }

@@ -9,27 +9,75 @@ import (
 )
 
 func TestNotesManager_Add(t *testing.T) {
+	createNote := func() Note {
+		return Note{
+			DeckName:  "test",
+			ModelName: "Basic-a39a1",
+			Fields: Fields{
+				"Front": "front content",
+				"Back":  "back content",
+			},
+			Options: &Options{
+				AllowDuplicate: false,
+				DuplicateScope: "deck",
+				DuplicateScopeOptions: &DuplicateScopeOptions{
+					DeckName:       "test",
+					CheckChildren:  false,
+					CheckAllModels: false,
+				},
+			},
+			Tags: []string{
+				"yomichan",
+			},
+			Audio: []Audio{
+				{
+					URL:      "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ",
+					Filename: "yomichan_ねこ_猫.mp3",
+					SkipHash: "7e2c2f954ef6051373ba916f000168dc",
+					Fields: []string{
+						"Front",
+					},
+				},
+			},
+			Video: []Video{
+				{
+					URL:      "https://cdn.videvo.net/videvo_files/video/free/2015-06/small_watermarked/Contador_Glam_preview.mp4",
+					Filename: "countdown.mp4",
+					SkipHash: "4117e8aab0d37534d9c8eac362388bbe",
+					Fields: []string{
+						"Back",
+					},
+				},
+			},
+			Picture: []Picture{
+				{
+					URL:      "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/A_black_cat_named_Tilly.jpg/220px-A_black_cat_named_Tilly.jpg",
+					Filename: "black_cat.jpg",
+					SkipHash: "8d6e4646dfae812bf39651b59d7429ce",
+					Fields: []string{
+						"Back",
+					},
+				},
+			},
+		}
+	}
+
 	t.Run("success", func(t *testing.T) {
 		defer httpmock.Reset()
 
-		result := new(Result[int64])
-		loadTestData(t, testDataPath+ActionAddNote+"Result"+jsonExt, result)
-		responder, err := httpmock.NewJsonResponder(http.StatusOK, result)
-		assert.NoError(t, err)
+		registerVerifiedPayload(t,
+			testDataPath+ActionAddNote+"Payload"+jsonExt,
+			testDataPath+ActionAddNote+"Result"+jsonExt)
 
-		httpmock.RegisterResponder(http.MethodPost, ankiConnectUrl, responder)
-
-		note := new(Note)
-		// This doesn't actually do anything
-		loadTestData(t, testDataPath+ActionAddNote+"Payload"+jsonExt, note)
-		restErr := client.Notes.Add(*note)
+		note := createNote()
+		restErr := client.Notes.Add(note)
 		assert.Nil(t, restErr)
 	})
 
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerErrorResponse(t)
+		registerErrorResponse(t)
 
 		note := new(Note)
 		result := new(Result[string])
@@ -80,7 +128,7 @@ func TestNotesManager_Get(t *testing.T) {
 	t.Run("errorFailSearch", func(t *testing.T) {
 		defer httpmock.Reset()
 
-    registerErrorResponse(t)
+		registerErrorResponse(t)
 
 		_, restErr := client.Notes.Get("deck:current")
 		assert.NotNil(t, restErr)
