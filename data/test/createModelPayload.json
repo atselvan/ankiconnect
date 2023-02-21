@@ -1,0 +1,17 @@
+{
+    "action": "createModel",
+    "version": 6,
+    "params": {
+        "modelName": "newModelName",
+        "inOrderFields": ["Field1", "Field2", "Field3"],
+        "css": "Optional CSS with default to builtin css",
+        "isCloze": false,
+        "cardTemplates": [
+            {
+                "Name": "My Card 1",
+                "Front": "Front html {{Field1}}",
+                "Back": "Back html  {{Field2}}"
+            }
+        ]
+    }
+}
