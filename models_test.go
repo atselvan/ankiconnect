@@ -34,6 +34,20 @@ func TestModelsManager_Create(t *testing.T) {
 		assert.Nil(t, restErr)
 	})
 
+	t.Run("realData", func(t *testing.T) {
+		// When running this against a real instance of anki,
+		// The returned result was a little different. So test to
+		// make sure we can handle both
+		defer httpmock.Reset()
+
+		registerVerifiedPayload(t,
+			loadTestPayload(t, ActionCreateModel),
+			loadTestResult(t, ActionCreateModel+"Extra"))
+
+		restErr := client.Models.Create(newModel)
+		assert.Nil(t, restErr)
+	})
+
 	t.Run("error", func(t *testing.T) {
 		defer httpmock.Reset()
 

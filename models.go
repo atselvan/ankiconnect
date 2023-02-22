@@ -1,6 +1,7 @@
 package ankiconnect
 
 import (
+	"encoding/json"
 	"github.com/privatesquare/bkst-go-utils/utils/errors"
 )
 
@@ -84,9 +85,12 @@ type (
 			Bqfmt string      `json:"bqfmt"`
 			Bafmt string      `json:"bafmt"`
 		} `json:"tmpls"`
-		Tags []interface{}   `json:"tags"`
-		Id   string          `json:"id"`
-		Req  [][]interface{} `json:"req"`
+		Tags []interface{} `json:"tags"`
+		// The api description describes the id as being a "number" (eg "23443")
+		// Where as in practice anki seems to return an actual int (eg 23443).
+		// json.Number handles both instances
+		Id  json.Number     `json:"id"`
+		Req [][]interface{} `json:"req"`
 	}
 )
 
