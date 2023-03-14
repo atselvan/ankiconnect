@@ -39,8 +39,8 @@ type (
 // GetAll retrieves all the decks from Anki.
 // The result is a slice of string with the names of the decks.
 // The method returns an error if:
-//	- the api request to ankiconnect fails.
-//	- the api returns a http error.
+//   - the api request to ankiconnect fails.
+//   - the api returns a http error.
 func (dm *decksManager) GetAll() (*[]string, *errors.RestErr) {
 	result, restErr := post[[]string, ParamsDefault](dm.Client, ActionDeckNames, nil)
 	if restErr != nil {
@@ -51,8 +51,8 @@ func (dm *decksManager) GetAll() (*[]string, *errors.RestErr) {
 
 // Create creates a new deck in Anki.
 // The method returns an error if:
-//	- the api request to ankiconnect fails.
-//	- the api returns a http error.
+//   - the api request to ankiconnect fails.
+//   - the api returns a http error.
 func (dm *decksManager) Create(name string) *errors.RestErr {
 	params := ParamsCreateDeck{
 		Deck: name,
@@ -66,8 +66,8 @@ func (dm *decksManager) Create(name string) *errors.RestErr {
 
 // Delete deletes a deck from Anki
 // The method returns an error if:
-//	- the api request to ankiconnect fails.
-//	- the api returns a http error.
+//   - the api request to ankiconnect fails.
+//   - the api returns a http error.
 func (dm *decksManager) Delete(name string) *errors.RestErr {
 	params := ParamsDeleteDecks{
 		Decks:    &[]string{name},

@@ -24,9 +24,12 @@ type (
 		httpClient *resty.Client
 
 		// supported interfaces
-		Decks DecksManager
-		Notes NotesManager
-		Sync SyncManager
+		Decks  DecksManager
+		Notes  NotesManager
+		Sync   SyncManager
+		Cards  CardsManager
+		Media  MediaManager
+		Models ModelsManager
 	}
 
 	// RequestPayload represents the request payload for anki connect api.
@@ -60,6 +63,9 @@ func NewClient() *Client {
 	c.Decks = &decksManager{Client: c}
 	c.Notes = &notesManager{Client: c}
 	c.Sync = &syncManager{Client: c}
+	c.Cards = &cardsManager{Client: c}
+	c.Media = &mediaManager{Client: c}
+	c.Models = &modelsManager{Client: c}
 
 	return c
 }

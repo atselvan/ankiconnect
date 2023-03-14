@@ -1,0 +1,21 @@
+{
+    "action": "updateNoteFields",
+    "version": 6,
+    "params": {
+        "note": {
+            "id": 1514547547030,
+            "fields": {
+                "Front": "new front content",
+                "Back": "new back content"
+            },
+            "audio": [{
+                "url": "https://assets.languagepod101.com/dictionary/japanese/audiomp3.php?kanji=猫&kana=ねこ",
+                "filename": "yomichan_ねこ_猫.mp3",
+                "skipHash": "7e2c2f954ef6051373ba916f000168dc",
+                "fields": [
+                    "Front"
+                ]
+            }]
+        }
+    }
+}
